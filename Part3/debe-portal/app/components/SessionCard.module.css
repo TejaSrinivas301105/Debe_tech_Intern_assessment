@@ -1,0 +1,80 @@
+.card {
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.subject {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1a202c;
+}
+
+.badge {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  text-transform: capitalize;
+}
+
+.confirmed {
+  background: #c6f6d5;
+  color: #276749;
+}
+
+.pending {
+  background: #fefcbf;
+  color: #744210;
+}
+
+.cancelled {
+  background: #fed7d7;
+  color: #822727;
+}
+
+.teacher {
+  font-size: 0.9rem;
+  color: #4a5568;
+  margin: 0;
+}
+
+.time {
+  font-size: 0.9rem;
+  color: #4a5568;
+  margin: 0;
+}
+
+.button {
+  margin-top: 8px;
+  padding: 9px 16px;
+  background: #3b82f6;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  align-self: flex-start;
+  transition: background 0.2s;
+}
+
+.button:hover:not(:disabled) {
+  background: #2563eb;
+}
+
+.button:disabled {
+  background: #a0aec0;
+  cursor: not-allowed;
+}
