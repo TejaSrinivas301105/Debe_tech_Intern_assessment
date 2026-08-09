@@ -23,12 +23,12 @@
   gap: 20px;
 }
 
-.placeholder {
-  margin-top: 24px;
+.success {
+  margin-bottom: 20px;
   padding: 14px 18px;
-  background: #ebf8ff;
-  border: 1px dashed #90cdf4;
+  background: #f0fff4;
+  border: 1px solid #9ae6b4;
   border-radius: 8px;
-  color: #2b6cb0;
+  color: #276749;
   font-size: 0.9rem;
 }
