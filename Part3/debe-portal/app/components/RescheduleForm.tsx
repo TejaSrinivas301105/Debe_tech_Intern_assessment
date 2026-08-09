@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Session, RescheduleReason, RescheduleRequest } from "@/types/session";
 import { requestReschedule } from "@/app/lib/mockFunction";
 import styles from "./RescheduleForm.module.css";
@@ -31,6 +31,14 @@ export default function RescheduleForm({ session, onClose, onSuccess }: Props) {
   const [reason, setReason] = useState<RescheduleReason>("Conflict");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Intl.DateTimeFormat().resolvedOptions().timeZone differs between Node.js and
+  // the browser — same hydration risk as SessionCard's date formatting.
+  // Defer reading the timezone to the client only via useEffect.
+  const [timezone, setTimezone] = useState<string>("");
+  useEffect(() => {
+    setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
+  }, []);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -66,11 +74,18 @@ export default function RescheduleForm({ session, onClose, onSuccess }: Props) {
   }
 
   return (
-    <div className={styles.overlay}>
+    // role="dialog" + aria-modal tells screen readers this is a modal dialog
+    <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div className={styles.modal}>
         <div className={styles.modalHeader}>
-          <h3>Request Reschedule</h3>
-          <button className={styles.closeBtn} onClick={onClose} disabled={loading}>
+          <h3 id="modal-title">Request Reschedule</h3>
+          {/* aria-label gives screen readers a meaningful name for the icon-only button */}
+          <button
+            className={styles.closeBtn}
+            onClick={onClose}
+            disabled={loading}
+            aria-label="Close reschedule form"
+          >
             ✕
           </button>
         </div>
@@ -80,27 +95,36 @@ export default function RescheduleForm({ session, onClose, onSuccess }: Props) {
         </p>
 
         <form onSubmit={handleSubmit} className={styles.form}>
-          <label className={styles.label}>
+          {/* htmlFor/id pairing links the label to the input for screen readers and
+              click-to-focus behaviour — without it the label is decorative only */}
+          <label className={styles.label} htmlFor="new-slot">
             New Date & Time
-            <span className={styles.hint}>
-              (shown in your local time — {Intl.DateTimeFormat().resolvedOptions().timeZone})
-            </span>
+            {timezone && (
+              <span className={styles.hint}>
+                (shown in your local time — {timezone})
+              </span>
+            )}
           </label>
 
           {/* min enforces the 2-hour lead-time policy at the input level.
               Slots within 2 hours of now are not selectable — the browser
               greys them out. The function also validates this server-side. */}
           <input
+            id="new-slot"
             type="datetime-local"
             className={styles.input}
             value={newSlot}
             min={getMinDatetime()}
             onChange={(e) => setNewSlot(e.target.value)}
             required
+            aria-required="true"
           />
 
-          <label className={styles.label}>Reason for Rescheduling</label>
+          <label className={styles.label} htmlFor="reason">
+            Reason for Rescheduling
+          </label>
           <select
+            id="reason"
             className={styles.select}
             value={reason}
             onChange={(e) => setReason(e.target.value as RescheduleReason)}
@@ -112,8 +136,11 @@ export default function RescheduleForm({ session, onClose, onSuccess }: Props) {
             ))}
           </select>
 
-          {/* Error state — shown inline so the parent doesn't lose form context */}
-          {error && <p className={styles.error}>⚠ {error}</p>}
+          {/* aria-live="polite" announces error messages to screen readers
+              without interrupting whatever they were reading */}
+          <div aria-live="polite">
+            {error && <p className={styles.error}>⚠ {error}</p>}
+          </div>
 
           <div className={styles.actions}>
             <button
@@ -124,7 +151,12 @@ export default function RescheduleForm({ session, onClose, onSuccess }: Props) {
             >
               Cancel
             </button>
-            <button type="submit" className={styles.submitBtn} disabled={loading}>
+            <button
+              type="submit"
+              className={styles.submitBtn}
+              disabled={loading}
+              aria-busy={loading}
+            >
               {loading ? "Submitting..." : "Submit Request"}
             </button>
           </div>

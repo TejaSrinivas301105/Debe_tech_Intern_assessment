@@ -17,13 +17,18 @@ export default function UpcomingSessions() {
   }
 
   return (
-    <section className={styles.container}>
+    <section className={styles.container} aria-label="Upcoming tutoring sessions">
       <h2 className={styles.heading}>Upcoming Sessions</h2>
       <p className={styles.subheading}>Your next {mockSessions.length} tutoring sessions</p>
 
-      {/* Success banner — shown after a reschedule request is submitted */}
+      {/* role="status" + aria-live="polite" announces the success message to screen
+          readers after form submission without interrupting current reading flow */}
       {successId && (
-        <div className={styles.success}>
+        <div
+          className={styles.success}
+          role="status"
+          aria-live="polite"
+        >
           ✓ Reschedule request submitted for{" "}
           <strong>{mockSessions.find((s) => s.id === successId)?.subject}</strong>. Your teacher will confirm shortly.
         </div>
@@ -35,14 +40,14 @@ export default function UpcomingSessions() {
             key={session.id}
             session={session}
             onReschedule={(s) => {
-              setSuccessId(null); 
+              setSuccessId(null); // clear previous success when opening a new form
               setSelectedSession(s);
             }}
           />
         ))}
       </div>
 
-     
+      {/* RescheduleForm renders as a modal overlay — only when a session is selected */}
       {selectedSession && (
         <RescheduleForm
           session={selectedSession}
