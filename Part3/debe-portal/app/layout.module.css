@@ -1,0 +1,45 @@
+.header {
+  background: #ffffff;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+.headerInner {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 14px 24px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo {
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: #1a202c;
+  letter-spacing: -0.5px;
+}
+
+.portalLabel {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: #718096;
+  background: #edf2f7;
+  padding: 3px 10px;
+  border-radius: 999px;
+}
+
+.content {
+  min-height: calc(100vh - 120px);
+}
+
+.footer {
+  border-top: 1px solid #e2e8f0;
+  padding: 20px 24px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: #a0aec0;
+  background: #ffffff;
+}

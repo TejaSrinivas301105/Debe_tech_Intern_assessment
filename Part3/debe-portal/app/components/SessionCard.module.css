@@ -7,6 +7,12 @@
   flex-direction: column;
   gap: 10px;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.06);
+  transition: box-shadow 0.2s, transform 0.2s;
+}
+
+.card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  transform: translateY(-2px);
 }
 
 .header {
@@ -68,6 +74,13 @@
   cursor: pointer;
   align-self: flex-start;
   transition: background 0.2s;
+}
+
+@media (max-width: 480px) {
+  .button {
+    align-self: stretch;
+    text-align: center;
+  }
 }
 
 .button:hover:not(:disabled) {
