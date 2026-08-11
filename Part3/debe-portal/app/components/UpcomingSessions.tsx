@@ -21,8 +21,7 @@ export default function UpcomingSessions() {
       <h2 className={styles.heading}>Upcoming Sessions</h2>
       <p className={styles.subheading}>Your next {mockSessions.length} tutoring sessions</p>
 
-      {/* role="status" + aria-live="polite" announces the success message to screen
-          readers after form submission without interrupting current reading flow */}
+      
       {successId && (
         <div
           className={styles.success}
@@ -40,14 +39,13 @@ export default function UpcomingSessions() {
             key={session.id}
             session={session}
             onReschedule={(s) => {
-              setSuccessId(null); // clear previous success when opening a new form
+              setSuccessId(null); 
               setSelectedSession(s);
             }}
           />
         ))}
       </div>
 
-      {/* RescheduleForm renders as a modal overlay — only when a session is selected */}
       {selectedSession && (
         <RescheduleForm
           session={selectedSession}

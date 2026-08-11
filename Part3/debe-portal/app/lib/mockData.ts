@@ -23,4 +23,22 @@ export const mockSessions: Session[] = [
     datetime: new Date(Date.now() + 5 * 24 * 60 * 60 * 1000).toISOString(), // 5 days from now
     status: "pending",
   },
+
+  {
+    id: "session-004",
+    subject: "DBMS",
+    teacherName: "Teja Srinivas",
+    datetime: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(), // tomorrow
+    status: "pending",
+  },
+
+  {
+    id: "session-005",
+    subject: "Next.js learning",
+    teacherName: "Prof.Srinivas",
+    datetime: new Date(Date.now() + 1 * 24 * 60 * 60 * 1000).toISOString(), // tomorrow
+    status: "pending",
+  }
+
+
 ];

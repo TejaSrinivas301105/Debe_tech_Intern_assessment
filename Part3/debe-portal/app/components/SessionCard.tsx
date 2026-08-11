@@ -1,4 +1,3 @@
-"use client";
 
 import { useState, useEffect } from "react";
 import { Session } from "@/types/session";
@@ -10,8 +9,7 @@ interface Props {
 }
 
 // Converts a UTC ISO string to the parent's local time for display.
-// We store UTC everywhere (Firestore, function payloads) and only convert
-// at the display boundary — this keeps all time comparisons consistent.
+
 function formatLocalTime(utcIso: string): string {
   return new Intl.DateTimeFormat(undefined, {
     weekday: "short",
@@ -20,7 +18,7 @@ function formatLocalTime(utcIso: string): string {
     year: "numeric",
     hour: "2-digit",
     minute: "2-digit",
-    timeZoneName: "short", // shows the parent's local timezone label (e.g. EST, IST)
+    timeZoneName: "short",
   }).format(new Date(utcIso));
 }
 
@@ -32,8 +30,7 @@ const statusColors: Record<Session["status"], string> = {
 
 export default function SessionCard({ session, onReschedule }: Props) {
   // Hydration fix: Intl.DateTimeFormat output differs between Node.js (server) and
-  // the browser because the server has no user locale/timezone context. Rendering
-  // the formatted time only after mount ensures server and client HTML always match.
+  // the browse. 
   const [localTime, setLocalTime] = useState<string | null>(null);
   useEffect(() => {
     setLocalTime(formatLocalTime(session.datetime));
@@ -52,15 +49,13 @@ export default function SessionCard({ session, onReschedule }: Props) {
         </span>
       </div>
       <p className={styles.teacher}>👤 {session.teacherName}</p>
-      {/* localTime is null on the server and first render — set to the correct local
-          time after mount. This prevents the server/client HTML mismatch. */}
+    
       <p className={styles.time}>🕐 {localTime ?? "Loading time..."}</p>
       <button
         className={styles.button}
         onClick={() => onReschedule(session)}
         disabled={session.status === "cancelled"}
-        // aria-label includes the subject so screen readers announce which session
-        // the button acts on — "Request Reschedule" alone is ambiguous with 3 cards
+        
         aria-label={`Request reschedule for ${session.subject} with ${session.teacherName}`}
       >
         Request Reschedule

@@ -14,15 +14,9 @@ interface Props {
 const REASONS: RescheduleReason[] = ["Conflict", "Illness", "Time zone", "Other"];
 
 // The minimum bookable datetime is NOW + 2 hours.
-// This enforces Debe's lead-time policy: teachers need at least 2 hours notice
-// to prepare. Without this, a parent could reschedule 5 minutes before a session,
-// leaving the teacher with no time to react.
 function getMinDatetime(): string {
   const min = new Date(Date.now() + 2 * 60 * 60 * 1000);
   // datetime-local input requires format: "YYYY-MM-DDTHH:MM"
-  // We slice off seconds and the "Z" — the value is in LOCAL time (browser's timezone).
-  // This is intentional: the input shows local time to the parent, but we convert
-  // to UTC before sending to the function (see handleSubmit below).
   return min.toISOString().slice(0, 16);
 }
 
@@ -32,9 +26,7 @@ export default function RescheduleForm({ session, onClose, onSuccess }: Props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Intl.DateTimeFormat().resolvedOptions().timeZone differs between Node.js and
-  // the browser — same hydration risk as SessionCard's date formatting.
-  // Defer reading the timezone to the client only via useEffect.
+  //Here also Hydration Issue occurs
   const [timezone, setTimezone] = useState<string>("");
   useEffect(() => {
     setTimezone(Intl.DateTimeFormat().resolvedOptions().timeZone);
@@ -45,11 +37,9 @@ export default function RescheduleForm({ session, onClose, onSuccess }: Props) {
     setError(null);
     setLoading(true);
 
-    // The datetime-local input gives us a LOCAL time string like "2026-08-10T14:30".
-    // new Date() treats this as local time and converts it to UTC internally.
-    // .toISOString() then gives us the UTC ISO string to send to the function.
-    // This is the critical conversion: parent sees local time, function receives UTC.
+    
     const utcSlot = new Date(newSlot).toISOString();
+    //const utcSlot = newSlot;
 
     const req: RescheduleRequest = {
       sessionId: session.id,
@@ -65,8 +55,6 @@ export default function RescheduleForm({ session, onClose, onSuccess }: Props) {
         setError(res.error ?? "Something went wrong.");
       }
     } catch {
-      // Catch any unexpected errors (network failure, function crash etc.)
-      // so they never surface as unhandled promise rejections in production.
       setError("Failed to reach the server. Please try again.");
     } finally {
       setLoading(false);
@@ -74,12 +62,10 @@ export default function RescheduleForm({ session, onClose, onSuccess }: Props) {
   }
 
   return (
-    // role="dialog" + aria-modal tells screen readers this is a modal dialog
     <div className={styles.overlay} role="dialog" aria-modal="true" aria-labelledby="modal-title">
       <div className={styles.modal}>
         <div className={styles.modalHeader}>
           <h3 id="modal-title">Request Reschedule</h3>
-          {/* aria-label gives screen readers a meaningful name for the icon-only button */}
           <button
             className={styles.closeBtn}
             onClick={onClose}
@@ -95,8 +81,7 @@ export default function RescheduleForm({ session, onClose, onSuccess }: Props) {
         </p>
 
         <form onSubmit={handleSubmit} className={styles.form}>
-          {/* htmlFor/id pairing links the label to the input for screen readers and
-              click-to-focus behaviour — without it the label is decorative only */}
+        
           <label className={styles.label} htmlFor="new-slot">
             New Date & Time
             {timezone && (
@@ -106,9 +91,7 @@ export default function RescheduleForm({ session, onClose, onSuccess }: Props) {
             )}
           </label>
 
-          {/* min enforces the 2-hour lead-time policy at the input level.
-              Slots within 2 hours of now are not selectable — the browser
-              greys them out. The function also validates this server-side. */}
+        
           <input
             id="new-slot"
             type="datetime-local"
@@ -136,8 +119,6 @@ export default function RescheduleForm({ session, onClose, onSuccess }: Props) {
             ))}
           </select>
 
-          {/* aria-live="polite" announces error messages to screen readers
-              without interrupting whatever they were reading */}
           <div aria-live="polite">
             {error && <p className={styles.error}>⚠ {error}</p>}
           </div>
